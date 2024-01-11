@@ -8,6 +8,8 @@ import branca
 colormap = cm.hot
 
 input_file = 'dat/DetectedFinal_All_20230501_20230531.dat'
+input_file = './MAD_10/dat/DetectedFinal_All_20230501_20230531_mad_10.dat'
+
 if __name__ ==  '__main__':
 
     catalog = pd.read_csv(input_file, delim_whitespace=True, header = 1, 
