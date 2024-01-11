@@ -7,8 +7,9 @@ import branca
 
 colormap = cm.hot
 
-input_file = 'dat/DetectedFinal_All_20230501_20230531.dat'
+input_file = './MAD_09/dat/DetectedFinal_All_20230501_20230531.dat'
 input_file = './MAD_10/dat/DetectedFinal_All_20230501_20230531_mad_10.dat'
+mad=9
 
 if __name__ ==  '__main__':
 
@@ -23,7 +24,7 @@ if __name__ ==  '__main__':
     depths = catalog['Depth']
     #print(catalog.head())
     
-    m = folium.Map(location=(19.432608, -99.133209), zoom_start=12)
+    m = folium.Map(location=(19.362414,-99.201035), zoom_start=14)
     k = 0
     colormap = branca.colormap.LinearColormap(colors=['blue', 'green', 'yellow', 'red'], 
                                           index=depths.quantile([0.25, 0.5, 0.75]), 
@@ -69,6 +70,7 @@ if __name__ ==  '__main__':
             ax[0].plot(row['Date'], row['Mag'], 'o', color='blue')
     ax[0].set_xlabel('Date')
     ax[0].set_ylabel('Magnitude')
+    ax[0].set_title(u'Template Matching Catalog for MAD ≥' + str(mad))
     ax[0].grid(True)
     # plot colorcoded by magnitude and add colorbar
     #ax[1].scatter(catalog['Date'], catalog['Depth'], c=catalog['Mag'], s=10)
@@ -89,4 +91,4 @@ if __name__ ==  '__main__':
     #plt.tight_layout()
     plt.savefig('Figure_01.png', dpi=300)
     #m.show_in_browser()
-    m.save('index.html')  
+    m.save(f'map_mad_{mad}.html')  
