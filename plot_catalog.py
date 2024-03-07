@@ -4,11 +4,23 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import matplotlib.cm as cm
 import branca
+import os
 
 colormap = cm.hot
 
-input_file = './MAD_09/dat/DetectedFinal_All_20230501_20230531.dat'
-input_file = './MAD_10/dat/DetectedFinal_All_20230501_20230531_mad_10.dat'
+#input_file = './MAD_09/dat/DetectedFinal_All_20230501_20230531.dat'
+#input_file = './MAD_10/dat/DetectedFinal_All_20230501_20230531_mad_10.dat'
+
+config = 'mad_9_G_1_0.01_1_R_0.005_0.005_0.1_I_0.0025_0.0025_0.05_T_2.0_0_2'
+config = 'mad_9_G_1_0.01_1_R_0.003_0.003_0.1_I_0.0015_0.0015_0.05_T_2.0_0_2'
+config = 'mad_9_G_1_0.01_1_R_0.004_0.004_0.1_I_0.002_0.002_0.05_T_3.0_0_3'
+config = 'mad_9_G_1_0.01_1_R_0_0_0_I_0.0015_0.0015_0.05_T_2.0_0_2'
+config = 'mad_9_G_1_0.01_1_R_0.004_0.004_0.1_I_0.002_0.002_0.05_T_2.0_0_2'
+input_file = os.path.join(config,'DetectedFinal_All_20230501_20230531_' + config + '.dat') 
+
+top3 = os.path.join(config,'top3.dat')
+print('top3:', top3)
+
 mad=9
 
 if __name__ ==  '__main__':
@@ -16,6 +28,7 @@ if __name__ ==  '__main__':
     catalog = pd.read_csv(input_file, delim_whitespace=True, header = 1, 
                          names=['No', 'Date', 'Time', 'latitude', 'longitude', 'Depth', 'Mag', 'CC', 'MAD', 'Reference'],
                          dtype={'No': int, 'Date': str, 'Time': str, 'latitude': float, 'longitude': float, 'Depth': float, 'Mag': float, 'CC': float, 'MAD': float, 'Reference': str})
+    top3 = pd.read_csv(top3, delim_whitespace=True, names=['N','Reference'], dtype = {'N': int,'Reference': str})
 
     catalog['Date'] = catalog['Date'].str.cat(catalog['Time'], sep=' ')
     catalog['Date'] = pd.to_datetime(catalog['Date'], format='%Y/%m/%d %H:%M:%S.%f')
@@ -56,7 +69,11 @@ if __name__ ==  '__main__':
                             popup=row['Date'].strftime('%Y/%m/%d %H:M:S') + ' ' + str(row['Mag']),
                             fill_color=color, # divvy color
                            ).add_to(m)
-    print('K:', k)
+    for index, row in top3.iterrows():
+        subcat = catalog.loc[catalog['Reference']==row['Reference']]
+        subcat.reset_index(drop=True, inplace=True)
+        ind_max = subcat['MAD'].idxmax()
+        folium.CircleMarker([subcat.iloc[ind_max]['latitude'], subcat.iloc[ind_max]['longitude']], popup=row['N'], fill_color='blue', radius = 20).add_to(m)
 
     fig, ax = plt.subplots(2, 1, figsize=(16, 4), sharex=True)
     markerlines, stemlines, _ = ax[0].stem(catalog['Date'], catalog['Mag'], 'o', linefmt='-', basefmt='black')
@@ -89,6 +106,6 @@ if __name__ ==  '__main__':
     #ax[2].set_ylabel('CC')
     #ax[2].grid(True)
     #plt.tight_layout()
-    plt.savefig('Figure_01.png', dpi=300)
+    plt.savefig(f'Figure_{config}.png', dpi=300)
     #m.show_in_browser()
-    m.save(f'map_mad_{mad}.html')  
+    m.save(f'map_mad_{config}.html')  
