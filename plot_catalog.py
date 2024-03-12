@@ -74,6 +74,10 @@ if __name__ ==  '__main__':
         subcat.reset_index(drop=True, inplace=True)
         ind_max = subcat['MAD'].idxmax()
         folium.CircleMarker([subcat.iloc[ind_max]['latitude'], subcat.iloc[ind_max]['longitude']], popup=row['N'], fill_color='blue', radius = 20).add_to(m)
+    folium.Marker(location=[19.375,  -99.1707], popup='BJVM').add_to(m)
+    folium.Marker(location=[19.3511,  -99.1562], popup='COVM').add_to(m)
+    folium.Marker(location=[19.4080, -99.2091], popup='MHVM').add_to(m)
+    folium.Marker(location=[19.3669, -99.1931], popup='ENP8').add_to(m)
 
     fig, ax = plt.subplots(2, 1, figsize=(16, 4), sharex=True)
     markerlines, stemlines, _ = ax[0].stem(catalog['Date'], catalog['Mag'], 'o', linefmt='-', basefmt='black')
