@@ -6,6 +6,9 @@ import matplotlib.cm as cm
 import branca
 import os
 
+#  31   2023/05/11   20:07:49.710   19.3660   -99.2020     0.38    1.43  0.5747    21.8900      20230512101933.83
+#   4   2023/05/12   10:19:33.830   19.3620   -99.2060     0.43    1.30  0.9903    37.9600      20230512101933.83
+
 colormap = cm.hot
 
 #input_file = './MAD_09/dat/DetectedFinal_All_20230501_20230531.dat'
@@ -17,22 +20,33 @@ config = 'mad_9_G_1_0.01_1_R_0.004_0.004_0.1_I_0.002_0.002_0.05_T_3.0_0_3'
 config = 'mad_9_G_1_0.01_1_R_0_0_0_I_0.0015_0.0015_0.05_T_2.0_0_2'
 config = 'mad_9_G_1_0.01_1_R_0.004_0.004_0.1_I_0.002_0.002_0.05_T_2.0_0_2'
 input_file = os.path.join(config,'DetectedFinal_All_20230501_20230531_' + config + '.dat') 
+repeaters_file = os.path.join('possible_repeaters_all.dat') 
+
+repeater = [19.3620,  -99.2060]
+
 
 top3 = os.path.join(config,'top3.dat')
 print('top3:', top3)
 
 mad=9
+names = ['No', 'Date', 'Time', 'latitude', 'longitude', 'Depth', 'Mag', 'CC', 'MAD', 'Reference']
+dtypes = {'No': int, 'Date': str, 'Time': str, 'latitude': float, 'longitude': float, 'Depth': float, 'Mag': float,
+          'CC': float, 'MAD': float, 'Reference': str}
 
 if __name__ ==  '__main__':
 
-    catalog = pd.read_csv(input_file, delim_whitespace=True, header = 1, 
-                         names=['No', 'Date', 'Time', 'latitude', 'longitude', 'Depth', 'Mag', 'CC', 'MAD', 'Reference'],
-                         dtype={'No': int, 'Date': str, 'Time': str, 'latitude': float, 'longitude': float, 'Depth': float, 'Mag': float, 'CC': float, 'MAD': float, 'Reference': str})
+    catalog =  pd.read_csv(input_file, delim_whitespace=True, header = 1, names=names, dtype=dtypes)
+    repeaters = pd.read_csv(repeaters_file, delim_whitespace=True, names=names, dtype=dtypes)
     top3 = pd.read_csv(top3, delim_whitespace=True, names=['N','Reference'], dtype = {'N': int,'Reference': str})
 
     catalog['Date'] = catalog['Date'].str.cat(catalog['Time'], sep=' ')
     catalog['Date'] = pd.to_datetime(catalog['Date'], format='%Y/%m/%d %H:%M:%S.%f')
     catalog = catalog.drop(columns=['Time'])
+
+    repeaters['Date'] = repeaters['Date'].str.cat(repeaters['Time'], sep=' ')
+    repeaters['Date'] = pd.to_datetime(repeaters['Date'], format='%Y/%m/%d %H:%M:%S.%f')
+    repeaters = repeaters.drop(columns=['Time'])
+
     norm = plt.Normalize(catalog['Depth'].min(), catalog['Depth'].max())
     depths = catalog['Depth']
     #print(catalog.head())
@@ -78,6 +92,9 @@ if __name__ ==  '__main__':
     folium.Marker(location=[19.3511,  -99.1562], popup='COVM').add_to(m)
     folium.Marker(location=[19.4080, -99.2091], popup='MHVM').add_to(m)
     folium.Marker(location=[19.3669, -99.1931], popup='ENP8').add_to(m)
+    folium.Marker(location=[19.329,  -99.178 ], popup='PZIG').add_to(m)
+
+    folium.CircleMarker(repeater, fill_color='red', fill_opacity=1,radius = 10, weigth=5, opacity=1, popup='Repeater').add_to(m)
 
     fig, ax = plt.subplots(2, 1, figsize=(16, 4), sharex=True)
     markerlines, stemlines, _ = ax[0].stem(catalog['Date'], catalog['Mag'], 'o', linefmt='-', basefmt='black')
@@ -89,6 +106,12 @@ if __name__ ==  '__main__':
             ax[0].plot(row['Date'], row['Mag'], 'o', color='red')
         else:
             ax[0].plot(row['Date'], row['Mag'], 'o', color='blue')
+
+    for index, row in repeaters.iterrows():
+        print(row['Date'], row['Mag'])
+        ax[0].plot(row['Date'], row['Mag'], 'k*', mec='black', mfc='yellow', markersize=12)
+
+
     ax[0].set_xlabel('Date')
     ax[0].set_ylabel('Magnitude')
     ax[0].set_title(u'Template Matching Catalog for MAD ≥' + str(mad))
@@ -98,6 +121,7 @@ if __name__ ==  '__main__':
     cax = inset_axes(ax[1], width="2%", height="100%", loc='upper right', borderpad=0)
     scatter = ax[1].scatter(catalog['Date'], catalog['Depth'], c=catalog['Mag'], s=catalog['Mag']*30, cmap='hot_r',edgecolor='black')
     cbar = plt.colorbar(scatter, ax=ax[1],cax=cax)
+    ax[1].plot(repeaters['Date'], repeaters['Depth'], 'k*', mec='black', mfc='yellow', markersize=12)
     cbar.set_label('Magnitude')
 
     #ax[1].plot(catalog['Date'], catalog['Depth'], 'o', markersize=2)
