@@ -1,12 +1,10 @@
 clear all
 close all
 
-N = 600000;
+N = 60000;
 
-X1 = 5*randn(N,1);
+X1 = 25*randn(N,1);
 X2 = 25*randn(N,1);
-
-dX = X1 + X2;
 
 rms_X1 = rms(X1)
 rms_X2 = rms(X2)

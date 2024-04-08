@@ -121,7 +121,7 @@ if __name__ ==  '__main__':
     cax = inset_axes(ax[1], width="2%", height="100%", loc='upper right', borderpad=0)
     scatter = ax[1].scatter(catalog['Date'], catalog['Depth'], c=catalog['Mag'], s=catalog['Mag']*30, cmap='hot_r',edgecolor='black')
     cbar = plt.colorbar(scatter, ax=ax[1],cax=cax)
-    ax[1].plot(repeaters['Date'], repeaters['Depth'], 'k*', mec='black', mfc='yellow', markersize=12)
+    ax[1].plot(repeaters['Date'], repeaters['Depth'], 'k*', mec='black', mfc='yellow', markersize=16)
     cbar.set_label('Magnitude')
 
     #ax[1].plot(catalog['Date'], catalog['Depth'], 'o', markersize=2)
