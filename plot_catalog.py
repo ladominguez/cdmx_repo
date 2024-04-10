@@ -20,7 +20,7 @@ config = 'mad_9_G_1_0.01_1_R_0.004_0.004_0.1_I_0.002_0.002_0.05_T_3.0_0_3'
 config = 'mad_9_G_1_0.01_1_R_0_0_0_I_0.0015_0.0015_0.05_T_2.0_0_2'
 config = 'mad_9_G_1_0.01_1_R_0.004_0.004_0.1_I_0.002_0.002_0.05_T_2.0_0_2'
 input_file = os.path.join(config,'DetectedFinal_All_20230501_20230531_' + config + '.dat') 
-repeaters_file = os.path.join('possible_repeaters_all.dat') 
+repeaters_file = os.path.join('possible_repeaters.dat') 
 
 repeater = [19.3620,  -99.2060]
 
@@ -119,8 +119,18 @@ if __name__ ==  '__main__':
     # plot colorcoded by magnitude and add colorbar
     #ax[1].scatter(catalog['Date'], catalog['Depth'], c=catalog['Mag'], s=10)
     cax = inset_axes(ax[1], width="2%", height="100%", loc='upper right', borderpad=0)
-    scatter = ax[1].scatter(catalog['Date'], catalog['Depth'], c=catalog['Mag'], s=catalog['Mag']*30, cmap='hot_r',edgecolor='black')
+    #scatter = ax[1].scatter(catalog['Date'], catalog['Depth'], c=catalog['Mag'], s=catalog['Mag']*5, cmap='hot_r',edgecolor='black')
+
+    template_detection = catalog.loc[catalog['CC'] >= 0.97]
+    print(template_detection)
+    print('No of template detections:', len(template_detection))
+    scatter = ax[1].scatter(template_detection['Date'], template_detection['Depth'], c=template_detection['Mag'], s=template_detection['Mag']*30, cmap='hot_r',edgecolor='black', marker='s')
     cbar = plt.colorbar(scatter, ax=ax[1],cax=cax)
+
+    all_detection = catalog.loc[catalog['CC'] < 0.97]
+    scatter = ax[1].scatter(all_detection['Date'], all_detection['Depth'], c=all_detection['Mag'], s=all_detection['Mag']*30, cmap='hot_r',edgecolor='black')
+
+
     ax[1].plot(repeaters['Date'], repeaters['Depth'], 'k*', mec='black', mfc='yellow', markersize=16)
     cbar.set_label('Magnitude')
 
