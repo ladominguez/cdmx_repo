@@ -28,14 +28,20 @@ repeater = [19.3620,  -99.2060]
 top3 = os.path.join(config,'top3.dat')
 print('top3:', top3)
 
-mad=9
+mad=9.0
 names = ['No', 'Date', 'Time', 'latitude', 'longitude', 'Depth', 'Mag', 'CC', 'MAD', 'Reference']
 dtypes = {'No': int, 'Date': str, 'Time': str, 'latitude': float, 'longitude': float, 'Depth': float, 'Mag': float,
           'CC': float, 'MAD': float, 'Reference': str}
 
 if __name__ ==  '__main__':
-
+    print('input_file:', input_file)
     catalog =  pd.read_csv(input_file, delim_whitespace=True, header = 1, names=names, dtype=dtypes)
+    catalog = catalog[catalog['MAD'] >= mad]
+
+    catalog_temp = pd.read_csv('catalog.dat', delim_whitespace=True, names = ['date', 'latitude', 'longitude', 'Depth', 'Mag', 'latitude2', 'longitude2', 'depth2'],
+                               dtype={'date': str, 'latitude': float, 'longitude': float, 'Depth': float, 'Mag': float, 'latitude2': float, 'longitude2': float, 'depth2': float})
+    catalog_temp['Date'] = pd.to_datetime(catalog_temp['date'], format='%Y%m%d%H%M%S.%f')
+
     repeaters = pd.read_csv(repeaters_file, delim_whitespace=True, names=names, dtype=dtypes)
     top3 = pd.read_csv(top3, delim_whitespace=True, names=['N','Reference'], dtype = {'N': int,'Reference': str})
 
@@ -121,15 +127,18 @@ if __name__ ==  '__main__':
     cax = inset_axes(ax[1], width="2%", height="100%", loc='upper right', borderpad=0)
     #scatter = ax[1].scatter(catalog['Date'], catalog['Depth'], c=catalog['Mag'], s=catalog['Mag']*5, cmap='hot_r',edgecolor='black')
 
-    template_detection = catalog.loc[catalog['CC'] >= 0.97]
-    print(template_detection)
-    print('No of template detections:', len(template_detection))
-    scatter = ax[1].scatter(template_detection['Date'], template_detection['Depth'], c=template_detection['Mag'], s=template_detection['Mag']*30, cmap='hot_r',edgecolor='black', marker='s')
+    #template_detection = catalog.loc[catalog['CC'] >= 0.97]
+    #scatter = ax[1].scatter(template_detection['Date'], template_detection['Depth'], c=template_detection['Mag'], s=template_detection['Mag']*30, cmap='hot_r',edgecolor='black', marker='s')
+    scatter = ax[1].scatter(catalog_temp['Date'], catalog_temp['Depth'], c=catalog_temp['Mag'], s=catalog_temp['Mag']*30, cmap='hot_r',edgecolor='black', marker='s')
     cbar = plt.colorbar(scatter, ax=ax[1],cax=cax)
 
     all_detection = catalog.loc[catalog['CC'] < 0.97]
     scatter = ax[1].scatter(all_detection['Date'], all_detection['Depth'], c=all_detection['Mag'], s=all_detection['Mag']*30, cmap='hot_r',edgecolor='black')
 
+    #print(template_detection)
+    #print('No of template detections:', len(template_detection))
+    print(all_detection)
+    print('No of all detections:', len(all_detection))
 
     ax[1].plot(repeaters['Date'], repeaters['Depth'], 'k*', mec='black', mfc='yellow', markersize=16)
     cbar.set_label('Magnitude')
