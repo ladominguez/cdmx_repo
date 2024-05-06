@@ -23,9 +23,15 @@ config = 'mad_9_G_1_0.01_1_R_0.004_0.004_0.1_I_0.002_0.002_0.05_T_2.0_0_2'
 # December
 #config = 'mad_9_G_1_0.01_1_R_0.002_0.002_0.1_I_0.001_0.001_0.05_T_2.0_0_2'
 #config = 'mad_9_G_1_0.01_1_R_0.003_0.003_0.1_I_0.0015_0.0015_0.05_T_2.0_0_2'
-config = 'mad_9_G_1_0.01_1_R_0.004_0.004_0.1_I_0.002_0.002_0.05_T_2.0_0_2'
+#config = 'mad_9_G_1_0.01_1_R_0.004_0.004_0.1_I_0.002_0.002_0.05_T_2.0_0_2'
 
-input_file = os.path.join('December_20231201_20231231_' + config,'Detected_December_20231201_20231231_' + config + '.dat') 
+# All
+config = 'mad_9_G_1_0.01_2_R_0.0021_0.0021_0.1_I_0.0007_0.0007_0.05_T_2.0_0_2'
+prefix = 'All_20230101_20231231_'
+
+#input_file = os.path.join('December_20231201_20231231_' + config,'Detected_December_20231201_20231231_' + config + '.dat') 
+input_file = os.path.join('outputs',f"{prefix}{config}", f"Detected_{prefix}{config}.dat")
+print('input_file: ', input_file)
 
 repeaters_flag = False
 
