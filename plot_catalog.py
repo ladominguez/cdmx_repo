@@ -24,13 +24,15 @@ config = 'mad_9_G_1_0.01_1_R_0.004_0.004_0.1_I_0.002_0.002_0.05_T_2.0_0_2'
 #config = 'mad_9_G_1_0.01_1_R_0.002_0.002_0.1_I_0.001_0.001_0.05_T_2.0_0_2'
 #config = 'mad_9_G_1_0.01_1_R_0.003_0.003_0.1_I_0.0015_0.0015_0.05_T_2.0_0_2'
 #config = 'mad_9_G_1_0.01_1_R_0.004_0.004_0.1_I_0.002_0.002_0.05_T_2.0_0_2'
+config = 'mad_9_G_1_0.01_1_R_0.003_0.003_0.1_I_0.0015_0.0015_0.05_T_2.0_0_2'
 
 # All
-config = 'mad_9_G_1_0.01_2_R_0.0021_0.0021_0.1_I_0.0007_0.0007_0.05_T_2.0_0_2'
-prefix = 'All_20230101_20231231_'
+#config = 'mad_9_G_1_0.01_2_R_0.0021_0.0021_0.1_I_0.0007_0.0007_0.05_T_2.0_0_2'
+#prefix = 'All_20230101_20231231_'
+prefix = 'December_20231201_20231231_'
 
 #input_file = os.path.join('December_20231201_20231231_' + config,'Detected_December_20231201_20231231_' + config + '.dat') 
-input_file = os.path.join('outputs',f"{prefix}{config}", f"Detected_{prefix}{config}.dat")
+input_file = os.path.join('outputs', f"Detected_{prefix}{config}.dat")
 print('input_file: ', input_file)
 
 repeaters_flag = False
@@ -50,7 +52,11 @@ dtypes = {'No': int, 'Date': str, 'Time': str, 'latitude': float, 'longitude': f
 
 if __name__ ==  '__main__':
     print('input_file:', input_file)
-    catalog =  pd.read_csv(input_file, delim_whitespace=True, header = 1, names=names, dtype=dtypes)
+    try:
+        catalog =  pd.read_csv(input_file, delim_whitespace=True, header = 1, names=names, dtype=dtypes)
+    except FileNotFoundError:
+        print('File does not exist')
+
     catalog = catalog[catalog['MAD'] >= mad]
 
     catalog_temp = pd.read_csv('catalog_december.dat', delim_whitespace=True, names = ['date', 'latitude', 'longitude', 'Depth', 'Mag', 'latitude2', 'longitude2', 'depth2'],
@@ -101,7 +107,7 @@ if __name__ ==  '__main__':
             #color = 'rgb(' + str(int(color[0]*255)) + ',' + str(int(color[1]*255)) + ',' + str(int(color[2]*255)) + ')'
             folium.CircleMarker([row['latitude'], row['longitude']],
                             radius=6,
-                            color=color,
+                            color='black',
                             popup=row['Date'].strftime('%Y/%m/%d %H:M:S') + ' ' + str(row['Mag']),
                             fill_color=color, # divvy color
                            ).add_to(m)
@@ -125,7 +131,7 @@ if __name__ ==  '__main__':
     plt.setp(markerlines, 'markeredgecolor', 'black')
 
     for index, row in catalog.iterrows():
-        if row['CC'] > 0.98:
+        if row['CC'] > 0.7:
             ax[0].plot(row['Date'], row['Mag'], 'o', color='red')
         else:
             ax[0].plot(row['Date'], row['Mag'], 'o', color='blue')

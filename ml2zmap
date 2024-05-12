@@ -1,0 +1,9 @@
+IN=$1
+OUT=$(echo $IN | sed 's/dat/.zmap.csv/g')
+awk  '{print $2}'  $1 | sed 's/\// /g' > date.tmp
+awk  '{print $3}'  $1 | awk -F. '{print $1}' | sed  's/:/ /g' > hour.tmp
+awk  '{print $4, $5, $6, $7}' $1       > else.tmp
+
+paste date.tmp hour.tmp else.tmp | awk '{print $8 "," $7 "," $1 "," $2 "," $3 "," $10 "," $9 "," $4 "," $5 }' #> $OUT
+
+#rm date.tmp hour.tmp else.tmp
