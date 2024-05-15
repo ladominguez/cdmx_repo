@@ -85,10 +85,16 @@ if __name__ ==  '__main__':
                                           index=depths.quantile([0.25, 0.5, 0.75]), 
                                           vmin=depths.min(), 
                                           vmax=depths.max())
+    
+    colormap2 = branca.colormap.linear.YlOrRd_09.scale(0,2)
+    colormap2 = colormap2.to_step(index=[0,0.250,0.500,0.750,1.000,1.250,1.500,1.750,2.000])
+    colormap2.add_to(m)
+    colormap2.caption = 'Depth (km)'
 
     for index, row in catalog.iterrows():
         if row['CC'] < 0.98:
-            color = colormap(row['Depth'])
+            #color = colormap(row['Depth'])
+            color = colormap2(row['Depth'])
             #color = color[:3]
             #color = 'rgb(' + str(int(color[0]*255)) + ',' + str(int(color[1]*255)) + ',' + str(int(color[2]*255)) + ')'
 
@@ -101,7 +107,8 @@ if __name__ ==  '__main__':
     for index, row in catalog.iterrows():
         if row['CC'] > 0.98:
             # Using folium.CircleMarker fill marker colorcoded by depth
-            color = colormap(row['Depth']) 
+            #color = colormap(row['Depth']) 
+            color = colormap2(row['Depth']) 
             #color = colormap(norm(row['Depth']))
             #color = color[:3]
             #color = 'rgb(' + str(int(color[0]*255)) + ',' + str(int(color[1]*255)) + ',' + str(int(color[2]*255)) + ')'
@@ -134,7 +141,8 @@ if __name__ ==  '__main__':
         if row['CC'] > 0.7:
             ax[0].plot(row['Date'], row['Mag'], 'o', color='red')
         else:
-            ax[0].plot(row['Date'], row['Mag'], 'o', color='blue')
+            pass
+            #ax[0].plot(row['Date'], row['Mag'], 'o', color='blue')
 
     if repeaters_flag:
         for index, row in repeaters.iterrows():
@@ -157,7 +165,7 @@ if __name__ ==  '__main__':
     cbar = plt.colorbar(scatter, ax=ax[1],cax=cax)
 
     all_detection = catalog.loc[catalog['CC'] < 0.97]
-    scatter = ax[1].scatter(all_detection['Date'], all_detection['Depth'], c=all_detection['Mag'], s=all_detection['Mag']*30, cmap='hot_r',edgecolor='black')
+    #scatter = ax[1].scatter(all_detection['Date'], all_detection['Depth'], c=all_detection['Mag'], s=all_detection['Mag']*30, cmap='hot_r',edgecolor='black')
 
     #print(template_detection)
     #print('No of template detections:', len(template_detection))
