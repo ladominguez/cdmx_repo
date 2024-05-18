@@ -14,7 +14,7 @@ network = {'BJVM': (19.375,  -99.1707),
             'MHVM': (19.4080, -99.2091),
             'ENP8': (19.3669, -99.1931)}
 
-def plot_map(stations=None):
+def plot_map():
     fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(10, 10))
 
     for shape in sf.shapeRecords():
@@ -54,6 +54,16 @@ def plot_catalog_templates(fig, ax, catalog, color='red', marker_size=10):
         ax.plot(float(row['longitude']), float(row['latitude']), 'ko', markersize=6, alpha=0.5, markerfacecolor=color)
     return fig, ax
 
+def plot_catalog_detections(fig, ax, catalog, color='red', marker_size=10):
+    for _, row in catalog.iterrows():
+        if row['Reference'][0:6] == '202305':
+            ax.plot(float(row['longitude']), float(row['latitude']), 'ko', markersize=6, alpha=0.5, markerfacecolor='red')
+        elif row['Reference'][0:6] == '202312':
+            ax.plot(float(row['longitude']), float(row['latitude']), 'ko', markersize=6, alpha=0.5, markerfacecolor='blue')
+        else:
+            print(f"Unknown template {row['Reference']}")
+    return fig, ax
+
 def plot_mainshock(fig, ax, catalog, color='yellow', marker_size=10):
     idx = catalog['magnitude'].idxmax()
     ax.plot(catalog['longitude'][idx], catalog['latitude'][idx], 'k*', markersize=marker_size, markerfacecolor=color)
@@ -72,6 +82,15 @@ def plot_scale(fig,ax):
     ax.plot([midpoint[0] - One_km/2, midpoint[0] + One_km/2], [midpoint[1], midpoint[1]], 'k-', lw=2)
     ax.text(midpoint[0], midpoint[1]+0.001, '1 km', fontsize=12, ha='center', va='bottom')
     return fig, ax
+
+def plot_pie_chart(fig, ax, catalog, no_templates):
+    axins = ax.inset_axes([0.75, 0.75, 0.25, 0.25])
+    count_may, count_decemeber = catalog['Reference'].str.contains('202305').value_counts()
+    sizes = [count_may, count_decemeber, no_templates]
+    labels = f'May ({count_may})', f'December ({count_decemeber})', f'Templates ({no_templates})'   
+    axins.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=True, startangle=90)
+    return fig, ax, count_may, count_decemeber
+
 
 if __name__ == '__main__':
     fig, ax = plot_map(stations=['BJVM', 'PZIG', 'COVM', 'MHVM', 'ENP8'])

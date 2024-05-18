@@ -20,6 +20,9 @@ if __name__ == '__main__':
     # markers for the templates
     ax.plot(-99.218, 19.388, 'k*', markersize=12,  markerfacecolor='yellow')
     ax.plot(-99.218, 19.385, 'k*', markersize=12,  markerfacecolor='lightgreen')
+
+
+    # markers for the detections
     ax.plot(-99.218, 19.382, 'ko', markersize=10, alpha=0.5, markerfacecolor='red')
     ax.plot(-99.218, 19.379, 'ko', markersize=10, alpha=0.5, markerfacecolor='blue')
 
