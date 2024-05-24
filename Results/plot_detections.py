@@ -3,12 +3,12 @@ from TM_utils import load_TM_catalog
 import pandas as pd
 
 input_file = '../outputs/Detected_MayAllTemplates_20230501_20230531_mad_9_G_1_0.01_2_R_0.0021_0.0021_0.1_I_0.0007_0.0007_0.05_T_2.0_0_2.dat'
-MAD_min = 9.3
+MAD_min = 10
 month = 'May'
 
-#input_file = '../outputs/Detected_DecemberAllTemplates_20231201_20231231_mad_9_G_1_0.01_2_R_0.0021_0.0021_0.1_I_0.0007_0.0007_0.05_T_2.0_0_2.dat'
-#MAD_min = 9.3
-#month = 'December'
+input_file = '../outputs/Detected_DecemberAllTemplates_20231201_20231231_mad_9_G_1_0.01_2_R_0.0021_0.0021_0.1_I_0.0007_0.0007_0.05_T_2.0_0_2.dat'
+MAD_min = 10
+month = 'December'
 # Load the data
 
 
@@ -33,5 +33,6 @@ if __name__ == '__main__':
     ax.title.set_text(f'Detections {month} 2023\nMAD ≥ {MAD_min} (n={len(detections_may)+no_templates})')
     ax.title.set_fontweight('bold')
     fig.savefig(f'detections_{month}_mad_{MAD_min}.png', dpi=600)
+    print(f'Saving detections_{month}_mad_{MAD_min}.png')
 
     pass

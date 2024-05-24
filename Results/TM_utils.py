@@ -12,6 +12,8 @@ def load_TM_catalog(filename, exclude_templates=True, MAD_min=9.0):
     catalog = catalog.drop(columns=['Time'])
     if exclude_templates:
         catalog, no_templates = _exclude_templates(catalog)
+    else:
+        no_templates = 0
     return catalog, no_templates
 
 def _exclude_templates(catalog):

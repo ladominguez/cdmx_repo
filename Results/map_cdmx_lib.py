@@ -85,7 +85,22 @@ def plot_scale(fig,ax):
 
 def plot_pie_chart(fig, ax, catalog, no_templates):
     axins = ax.inset_axes([0.75, 0.75, 0.25, 0.25])
-    count_may, count_decemeber = catalog['Reference'].str.contains('202305').value_counts()
+
+    try:
+        count_may = catalog['Reference'].str.contains('202305').value_counts()[True]
+    except:
+        count_may = 0
+    
+    try:
+        count_decemeber = catalog['Reference'].str.contains('202312').value_counts()[True]
+    except:
+        count_decemeber = 0
+
+    #try:
+    #    count_may, count_decemeber = catalog['Reference'].str.contains('202305').value_counts()
+    #except ValueError:
+    #    count_may = catalog['Reference'].str.contains('202305').value_counts()
+    #    count_decemeber = 0
     sizes = [count_may, count_decemeber, no_templates]
     labels = f'May ({count_may})', f'December ({count_decemeber})', f'Templates ({no_templates})'   
     axins.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=True, startangle=90)
