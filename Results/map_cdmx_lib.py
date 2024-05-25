@@ -1,10 +1,11 @@
 import shapefile as shp  # Requires the pyshp package
 from pyproj import Proj, transform
 from matplotlib import pyplot as plt
-
+import geopy
+import geopy.distance
 
 zone = 14
-sf = shp.Reader("./zip/1ra_Red_vial_primaria_acceso_controlado_cdmx_09_23.shp")
+sf = shp.Reader("/Users/antonio/Dropbox/Geofisica/Research/cdmx_repo/Results/zip/1ra_Red_vial_primaria_acceso_controlado_cdmx_09_23.shp")
 proj_string = "+proj=utm +zone={} +ellps=WGS84".format(zone)
 proj_utm = Proj(proj_string)
 
@@ -31,7 +32,7 @@ def plot_map():
     ax.set_xlim(-99.22, -99.15)
     ax.set_ylim(19.340, 19.410)
     ax.set_aspect('equal', adjustable='box')
-    ax.text(-99.18809090909091,19.381363636363634,'Insurgentes', fontsize=12, rotation=85, ma='left', va='bottom')
+    ax.text(-99.178500000000000, 19.38000000000000,'Insurgentes', fontsize=12, rotation=76, ma='left', va='bottom')
     ax.text(-99.16904545454545, 19.35781818181818,'Circuito Interior', fontsize=12, rotation=-5, ma='left', va='bottom')
     ax.text(-99.20659090909092, 19.368181818181817,'Alta Tension', fontsize=12, rotation=75, ma='left', va='bottom')
     ax.text(-99.20440909090909, 19.341590909090908,'Periferico', fontsize=12, rotation=80, ma='left', va='bottom')
@@ -69,11 +70,20 @@ def plot_mainshock(fig, ax, catalog, color='yellow', marker_size=10):
     ax.plot(catalog['longitude'][idx], catalog['latitude'][idx], 'k*', markersize=marker_size, markerfacecolor=color)
     return fig, ax
 
-def plot_fault_trace(fig, ax, eq_name='may'):
+def plot_mainshock_december_14(fig, ax,  color='yellow', marker_size=10):
+    ax.plot(-99.199, 19.365, 'k*', markersize=marker_size, markerfacecolor=color)
+    return fig, ax
+
+def plot_fault_trace(fig, ax, eq_name='both'):
     if eq_name == 'may':
         ax.plot((-99.20175, -99.17747),(19.360931, 19.366446), 'k-', lw=2)
     elif eq_name == 'december':
         ax.plot((-99.1997, -99.1844),(19.3707, 19.3721), 'k-', lw=2)
+    elif eq_name == 'both':
+        ax.plot((-99.20175, -99.17747),(19.360931, 19.366446), 'k-', lw=2, color = 'darkred')
+        ax.plot((-99.1997, -99.1844),(19.3707, 19.3721), 'k-', lw=2, color = 'darkblue')
+    else:
+        print(f"Unknown fault trace {eq_name}")
     return fig, ax
 
 def plot_scale(fig,ax):
@@ -106,6 +116,15 @@ def plot_pie_chart(fig, ax, catalog, no_templates):
     axins.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=True, startangle=90)
     return fig, ax, count_may, count_decemeber
 
+def plot_bearings(fig, ax, bearings):
+    for station, bearing in bearings.items():
+        pt1 = geopy.Point(network[station])
+        pt2 = geopy.distance.distance(kilometers=20).destination(pt1, bearing)
+        ax.plot([pt1.longitude, pt2.longitude], [pt1.latitude, pt2.latitude], 'k--', lw=1.5, color='dimgray')
+        if station == 'ENP8':
+            pt2 = geopy.distance.distance(kilometers=20).destination(pt1, bearing + 180) 
+            ax.plot([pt1.longitude, pt2.longitude], [pt1.latitude, pt2.latitude], 'k--', lw=1.5, color='dimgray')
+    return fig, ax
 
 if __name__ == '__main__':
     fig, ax = plot_map(stations=['BJVM', 'PZIG', 'COVM', 'MHVM', 'ENP8'])
