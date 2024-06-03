@@ -6,22 +6,36 @@ import sys
 sys.path.append('../Results')
 from map_cdmx_lib import plot_map, add_stations, plot_fault_trace, plot_mainshock_december_14, plot_scale, plot_bearings
 
-# Stations
+# Stations - December 14
 stations = ['PZIG', 'BJVM', 'ENP8','COVM']
 stations = ['ENP8']
-window = {'PZIG': 0.25, 'BJVM': 0.20, 'ENP8': 0.15, 'COVM': 0.2}
+window = {'PZIG': 0.25, 'BJVM': 0.20, 'ENP8': 0.08, 'COVM': 0.2}
 r_sta  = {'PZIG': 50000, 'BJVM': 80000, 'ENP8': 30000, 'COVM': 10000}
-bearing_offset = {'PZIG': 180, 'BJVM': 180, 'ENP8': 180, 'COVM': 0}
+bearing_offset = {'PZIG': 180, 'BJVM': 180, 'ENP8': 0, 'COVM': 0}
 head_sta = {'PZIG': 5000, 'BJVM': 5000, 'ENP8': 1000, 'COVM': 1000}
 color_arrow = {'PZIG': 'darkred', 'BJVM': 'darkorange', 'ENP8': 'teal', 'COVM': 'purple'}
 
+# Stations - December 12
+stations = ['PZIG', 'BJVM', 'ENP8','COVM']
+stations = ['ENP8']
+window = {'PZIG': 0.6, 'BJVM': 0.20, 'ENP8': 0.09, 'COVM': 0.2, 'MHVM': 0.5}
+r_sta  = {'PZIG': 50000, 'BJVM': 80000, 'ENP8': 8000, 'COVM': 10000}
+bearing_offset = {'PZIG': 180, 'BJVM': 180, 'ENP8': 0, 'COVM': 0}
+head_sta = {'PZIG': 5000, 'BJVM': 5000, 'ENP8': 1000, 'COVM': 1000}
+color_arrow = {'PZIG': 'darkred', 'BJVM': 'darkorange', 'ENP8': 'teal', 'COVM': 'purple'}
+
+
 eq_title = '2023-12-14 20:13:14.72 UTC'
+eq_title = '2023-12-12 17:07:53.06 UTC'
+
+directory = './20231214201314.72/*'
+directory = './20231212170753.06/*'
 
 #stations = ['COVM']
 N_sta = len(stations)
 
 def plot_polarization(stations, window, r_sta, bearing_offset, head_sta, color_arrow, eq_title):
-    st = read('./20231214201314.72/*')
+    st = read(directory)
     fig, ax = plt.subplots(nrows=4,ncols=N_sta ,figsize=(4*N_sta, 11), squeeze=False)
     bearings = {}
 
@@ -87,6 +101,9 @@ def plot_polarization(stations, window, r_sta, bearing_offset, head_sta, color_a
         ax[0,k].set_ylim(np.min([ylim0[0], ylim1[0], ylim2[0]]), np.max([ylim0[1], ylim1[1], ylim2[1]]))
         ax[1,k].set_ylim(np.min([ylim0[0], ylim1[0], ylim2[0]]), np.max([ylim0[1], ylim1[1], ylim2[1]]))
         ax[2,k].set_ylim(np.min([ylim0[0], ylim1[0], ylim2[0]]), np.max([ylim0[1], ylim1[1], ylim2[1]]))
+        ax[0,k].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+        ax[1,k].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+        ax[2,k].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
                        
 
 
@@ -111,7 +128,7 @@ def plot_polarization(stations, window, r_sta, bearing_offset, head_sta, color_a
 
         ax[3,k].set_aspect('equal')
         ax[3,k].arrow(0, 0, r*np.cos(np.radians(theta0)), r*np.sin(np.radians(theta0)), color=color_arrow[station], width=0.35, length_includes_head=True, head_width=head_sta[station], head_length=head_sta[station])
-        ax[3,k].annotate(f'{int(np.round(bearings[station]))}°', xy=(r*np.cos(np.radians(theta0)), r*np.sin(np.radians(theta0))), xytext=(r*np.cos(np.radians(theta0)), r*np.sin(np.radians(theta0))), color=color_arrow[station], fontsize=12)
+        ax[3,k].annotate(f'{int(np.round(bearings[station]))}°', xy=(r*np.cos(np.radians(theta0)), r*np.sin(np.radians(theta0))), xytext=(r*np.cos(np.radians(theta0))+900, r*np.sin(np.radians(theta0))), color=color_arrow[station], fontsize=12)
         #ax[3,k].grid('--', alpha=0.5, linewidth=0.5)
         ax[3,k].ticklabel_format(style='sci', axis='x', scilimits=(0,0))
         ax[3,k].tick_params(axis='both', which='both', bottom=False, top=False, left=False, right=False, labelbottom=False, labelleft=False)
@@ -120,7 +137,8 @@ def plot_polarization(stations, window, r_sta, bearing_offset, head_sta, color_a
         ax[3,k].spines['left'].set_visible(False)
         ax[3,k].spines['right'].set_visible(False)
         ax[3,k].set_xlabel('East')
-        ax[3,k].set_ylabel('north')
+        ax[3,k].set_ylabel('North')
+        #ax[3,k].set_ylabel('vertical')
         #ax[3,k].set_title(f'Window = {window[station]} s')  
 
         #fig.suptitle(f'Polarization Analysis - {eq_title}', fontsize=16)      
@@ -142,8 +160,9 @@ if __name__ == '__main__':
     fig_pol, ax_pol, bearings = plot_polarization(stations, window, r_sta, bearing_offset, head_sta, color_arrow, eq_title)
     #_, _, bearings = plot_polarization(stations, window, r_sta, bearing_offset, head_sta, color_arrow, eq_title)
     #plot_map_polarization()
+    fig_pol.suptitle(eq_title)
 
-    #fig_pol.savefig('polarization_analysis_december14.png', dpi=500)
+    fig_pol.savefig('polarization_analysis_december12_north_east.png', dpi=500)
     #fig_map.savefig('polarization_analysis_map_december14.png', dpi=500)
     pass
 

@@ -5,7 +5,8 @@ import geopy
 import geopy.distance
 
 zone = 14
-sf = shp.Reader("/Users/antonio/Dropbox/Geofisica/Research/cdmx_repo/Results/zip/1ra_Red_vial_primaria_acceso_controlado_cdmx_09_23.shp")
+#sf = shp.Reader("/Users/antonio/Dropbox/Geofisica/Research/cdmx_repo/Results/zip/1ra_Red_vial_primaria_acceso_controlado_cdmx_09_23.shp")
+sf = shp.Reader("/home/lantonio/Dropbox/Geofisica/Research/cdmx_repo/Results/zip/1ra_Red_vial_primaria_acceso_controlado_cdmx_09_23.shp")
 proj_string = "+proj=utm +zone={} +ellps=WGS84".format(zone)
 proj_utm = Proj(proj_string)
 
