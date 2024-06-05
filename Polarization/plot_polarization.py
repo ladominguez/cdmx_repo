@@ -9,27 +9,27 @@ from map_cdmx_lib import plot_map, add_stations, plot_fault_trace, plot_mainshoc
 # Stations - December 14
 stations = ['PZIG', 'BJVM', 'ENP8','COVM']
 stations = ['ENP8']
-window = {'PZIG': 0.25, 'BJVM': 0.20, 'ENP8': 0.08, 'COVM': 0.2}
+window = {'PZIG': 0.25, 'BJVM': 0.20, 'ENP8': 0.14, 'COVM': 0.2}
 r_sta  = {'PZIG': 50000, 'BJVM': 80000, 'ENP8': 30000, 'COVM': 10000}
 bearing_offset = {'PZIG': 180, 'BJVM': 180, 'ENP8': 0, 'COVM': 0}
 head_sta = {'PZIG': 5000, 'BJVM': 5000, 'ENP8': 1000, 'COVM': 1000}
 color_arrow = {'PZIG': 'darkred', 'BJVM': 'darkorange', 'ENP8': 'teal', 'COVM': 'purple'}
 
 # Stations - December 12
-stations = ['PZIG', 'BJVM', 'ENP8','COVM']
-stations = ['ENP8']
-window = {'PZIG': 0.6, 'BJVM': 0.20, 'ENP8': 0.09, 'COVM': 0.2, 'MHVM': 0.5}
-r_sta  = {'PZIG': 50000, 'BJVM': 80000, 'ENP8': 8000, 'COVM': 10000}
-bearing_offset = {'PZIG': 180, 'BJVM': 180, 'ENP8': 0, 'COVM': 0}
-head_sta = {'PZIG': 5000, 'BJVM': 5000, 'ENP8': 1000, 'COVM': 1000}
-color_arrow = {'PZIG': 'darkred', 'BJVM': 'darkorange', 'ENP8': 'teal', 'COVM': 'purple'}
+#stations = ['PZIG', 'BJVM', 'ENP8','COVM']
+#stations = ['ENP8']
+#window = {'PZIG': 0.6, 'BJVM': 0.20, 'ENP8': 0.09, 'COVM': 0.2, 'MHVM': 0.5}
+#r_sta  = {'PZIG': 50000, 'BJVM': 80000, 'ENP8': 8000, 'COVM': 10000}
+#bearing_offset = {'PZIG': 180, 'BJVM': 180, 'ENP8': 0, 'COVM': 0}
+#head_sta = {'PZIG': 5000, 'BJVM': 5000, 'ENP8': 1000, 'COVM': 1000}
+#color_arrow = {'PZIG': 'darkred', 'BJVM': 'darkorange', 'ENP8': 'teal', 'COVM': 'purple'}
 
 
 eq_title = '2023-12-14 20:13:14.72 UTC'
-eq_title = '2023-12-12 17:07:53.06 UTC'
+#eq_title = '2023-12-12 17:07:53.06 UTC'
 
 directory = './20231214201314.72/*'
-directory = './20231212170753.06/*'
+#directory = './20231212170753.06/*'
 
 #stations = ['COVM']
 N_sta = len(stations)
