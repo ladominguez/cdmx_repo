@@ -8,7 +8,7 @@ import os
 colormap = cm.hot
 
 cc_lim = 0.68
-mad = 9.3
+mad = 9.2
 
 config = 'mad_9_G_1_0.01_1_R_0.005_0.005_0.1_I_0.0025_0.0025_0.05_T_2.0_0_2'
 config = 'mad_9_G_1_0.01_1_R_0.003_0.003_0.1_I_0.0015_0.0015_0.05_T_2.0_0_2'
@@ -28,8 +28,10 @@ config = 'mad_9_G_1_0.01_2_R_0.0021_0.0021_0.1_I_0.0007_0.0007_0.05_T_2.0_0_2'
 #prefix = 'All_20230101_20231231_'
 prefix = 'DecemberAllTemplates_20231201_20231231_'
 
-#input_file = os.path.join('December_20231201_20231231_' + config,'Detected_December_20231201_20231231_' + config + '.dat') 
+#input_file = os.path.join('December_20231201_20231231_' + config,'Detected_December_20231201_20231231_' + config + '.dat')
 input_file = os.path.join('outputs', f"Detected_{prefix}{config}.dat")
+input_file = "./Results/DetectedFinal_All_20230501_20230531_mad_9_G_1_0.01_1_R_0.004_0.004_0.1_I_0.002_0.002_0.05_T_3.0_0_3.dat"
+#input_file = "./Results/Detected_JanuaryMay_20230101_20230531_mad_9_G_1_0.01_2_R_0.004_0.004_0.1_I_0.002_0.002_0.05_T_3.0_0_3.dat"
 print('input_file: ', input_file)
 
 repeaters_flag = False
@@ -56,7 +58,7 @@ if __name__ ==  '__main__':
 
     catalog = catalog[catalog['MAD'] >= mad]
 
-    catalog_temp = pd.read_csv('catalog_december.dat', delim_whitespace=True, names = ['date', 'latitude', 'longitude', 'Depth', 'Mag', 'latitude2', 'longitude2', 'depth2'],
+    catalog_temp = pd.read_csv('catalog_may.dat', delim_whitespace=True, names = ['date', 'latitude', 'longitude', 'Depth', 'Mag', 'latitude2', 'longitude2', 'depth2'],
                                dtype={'date': str, 'latitude': float, 'longitude': float, 'Depth': float, 'Mag': float, 'latitude2': float, 'longitude2': float, 'depth2': float})
     catalog_temp['Date'] = pd.to_datetime(catalog_temp['date'], format='%Y%m%d%H%M%S.%f')
 
@@ -130,18 +132,19 @@ if __name__ ==  '__main__':
         folium.CircleMarker(repeater, fill_color='red', fill_opacity=1,radius = 10, weigth=5, opacity=1, popup='Repeater').add_to(m)
 
     fig, ax = plt.subplots(3, 1, figsize=(16, 6), sharex=True)
-    markerlines, stemlines, _ = ax[0].stem(catalog['Date'], catalog['Mag'], 'o', linefmt='-', basefmt='black')
+    plt.subplots_adjust(wspace=0, hspace=0)
+    markerlines, stemlines, _ = ax[0].stem(catalog['Date'], catalog['Mag'], 'o', linefmt='--', basefmt='black')
     plt.setp(stemlines, 'linewidth', 1)
     plt.setp(markerlines, 'markeredgecolor', 'black')
 
     catalog_counter = 0
     for index, row in catalog.iterrows():
         if row['CC'] > cc_lim:
-            ax[0].plot(row['Date'], row['Mag'], 'o', color='red')
+            ax[0].plot(row['Date'], row['Mag'], 'o', color='darkorange', markersize=9, markeredgecolor='black')
             catalog_counter += 1
         else:
             #pass
-            ax[0].plot(row['Date'], row['Mag'], 'o', color='blue')
+            ax[0].plot(row['Date'], row['Mag'], 'o', color='navy', markersize=7, markeredgecolor='black')
 
     print('No of templates:', catalog_counter)
 
@@ -152,9 +155,17 @@ if __name__ ==  '__main__':
 
 
     ax[0].set_xlabel('Date')
-    ax[0].set_ylabel('Magnitude')
-    ax[0].set_title(u'Template Matching Catalog for MAD ≥' + str(mad))
+    ax[0].set_ylabel('Magnitude', fontsize = 14)
+    #ax[0].set_title(u'Template Matching Catalog for MAD ≥' + str(mad))
+    ax[0].set_ylim([0, 3.2])
+    ax[0].set_yticklabels(ax[0].get_yticklabels(), fontsize=12)
     ax[0].grid(True)
+    #ax[0].set_ylabels = ['', '1', '2', '3']
+    ax[0].set_ylim([0, 3.4])
+    yticks_ax0 = ax[0].yaxis.get_major_ticks()
+    yticks_ax0[0].label1.set_visible(False)
+    #yticks_ax0 = ax[0].yaxis.get_major_ticks()
+    #yticks_ax0[-1].label.set_visible(False)
     # plot colorcoded by magnitude and add colorbar
     # ax[1].scatter(catalog['Date'], catalog['Depth'], c=catalog['Mag'], s=5)
     cax = inset_axes(ax[1], width="2%", height="100%", loc='upper right', borderpad=0)
@@ -166,28 +177,33 @@ if __name__ ==  '__main__':
     cbar = plt.colorbar(scatter, ax=ax[1],cax=cax)
 
     all_detection = catalog.loc[catalog['CC'] < cc_lim]
+    all_Templates = catalog.loc[catalog['CC'] >= cc_lim]
     scatter = ax[1].scatter(all_detection['Date'], all_detection['Depth'], c=all_detection['Mag'], s=all_detection['Mag']*30, cmap='hot_r',edgecolor='black')
 
     if repeaters_flag:
         ax[1].plot(repeaters['Date'], repeaters['Depth'], 'k*', mec='black', mfc='yellow', markersize=16)
-    cbar.set_label('Magnitude')
+    cbar.set_label('Magnitude', fontsize=14)
 
-    ax[1].set_xlabel('Date')
-    ax[1].set_ylabel('Depth')
+    #ax[1].set_xlabel('Date')
+    ax[1].set_ylabel('Depth', fontsize = 14)
     ax[1].invert_yaxis()
+    ax[1].set_yticklabels(ax[1].get_yticklabels(), fontsize=12)
     ax[1].grid(True)
 
     cax2 = inset_axes(ax[2], width="2%", height="100%", loc='upper right', borderpad=0)
     scatter2 = ax[2].scatter(all_detection['Date'], all_detection['Depth'], c=all_detection['MAD'], s=all_detection['MAD']*10, cmap='hot_r',edgecolor='black', marker='s')
+    scatter2 = ax[2].scatter(all_Templates['Date'], all_Templates['Depth'], c=all_Templates['MAD'], s=all_Templates['MAD']*2,  cmap='hot_r',edgecolor='black', marker='D')
     cbar2 = plt.colorbar(scatter2, ax=ax[2],cax=cax2)
-    cbar2.set_label('MAD')
-    ax[2].set_xlabel('Date')
-    ax[2].set_ylabel('Depth')
+    cbar2.set_label('MAD', fontsize=14)
+    #ax[2].set_xlabel('Date', fontsize=14)
+    ax[2].set_ylabel('Depth', fontsize=14)
+    ax[2].set_xticklabels(ax[2].get_xticklabels(), rotation=-15, ha='left', fontsize=14)
+    ax[2].set_yticklabels(ax[2].get_yticklabels(), fontsize=12)
     ax[2].invert_yaxis()
     ax[2].grid(True)
 
-    plt.savefig(f'Figure_December_{config}.png', dpi=300)
-    print(f'Saved Figure_December_{config}.png')
+    plt.savefig(f'Figure_Final_{config}.png', dpi=500)
+    print(f'Saved Figure_Final_{config}.png')
     #m.show_in_browser()
-    m.save(f'map_mad_December_{config}.html')  
+    m.save(f'map_Final_{config}.html')  
     print(f'Saved map_mad_December_{config}.html')
